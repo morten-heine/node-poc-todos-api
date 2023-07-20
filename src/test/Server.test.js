@@ -1,46 +1,49 @@
 const axios = require('axios');
 require('dotenv').config();
 
+function delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+}
+
 (async () => {
     const env=process.env.ENV;
 
     const apihost = process.env[`api_host_${env}`];
     const apiport = process.env[`api_listen_port_${env}`];
+    const baseUrl = `http://${apihost}`+(apiport?`:${apiport}`:"");
 
-    console.log(apihost);
-    console.log(apiport);
+    console.log(baseUrl);
 
     this.httpClient = axios.create({
-        baseURL: `http://${apihost}:${apiport}`
+        baseURL: baseUrl
     });
 
     // Get todos
-    var response = await this.httpClient.get(`/todos`);
-    const fetchedTodos1 = await response.data;
-    console.log("Get todos");
+    const response1 = await this.httpClient.get(`/todos`);
+    const fetchedTodos1 = await response1.data;
+    console.log("Got todos "+ JSON.stringify(fetchedTodos1));
 
     // create new todo
     const todo = { text: 'Test todo', done: false };
-    response = await this.httpClient.post('/todos', todo);
-    var newTodo = await response.data;
-    console.log("Create new todo");
+    const response2 = await this.httpClient.post('/todos', todo);
+    const newTodo = await response2.data;
+    console.log("Created new todo"+ JSON.stringify(newTodo));
 
-    // get current todos
-    response = await this.httpClient.get(`/todos`);
-    const fetchedTodos2 = await response.data;
+    const response3 = await this.httpClient.get(`/todos`);
+    const fetchedTodos2 = await response3.data;
     console.log("Get current todos");
 
     // Check we have one more
     const l1 = fetchedTodos1.length;
     const l2 = fetchedTodos2.length;
     if (l1 + 1 != l2) {
-        throw new Error('testTodoCreation');
+        throw new Error('testTodoCreation, not one more');
     }
     console.log("Check number of current todos");
 
     // Check the new one has the right data
-    response = await this.httpClient.get(`/todos/${newTodo.id}`);
-    const fetchedTodo1 = await response.data;
+    const response4 = await this.httpClient.get(`/todos/${newTodo.id}`);
+    const fetchedTodo1 = await response4.data;
     if (newTodo.name !== fetchedTodo1.name || fetchedTodo1.done) {
         throw new Error('testTodoCreation');
     }
@@ -48,48 +51,48 @@ require('dotenv').config();
 
     // create new comment
     const com = {comment : 'Test comment'};
-    response = await this.httpClient.post(`/todos/${newTodo.id}/comments`, com);
-    newComment = await response.data;
+    const response5 = await this.httpClient.post(`/todos/${newTodo.id}/comments`, com);
+    const newComment = await response5.data;
     console.log("Create new todo comment");
 
     // Fetch the comment
-    response = await this.httpClient.get(`/todos/${newTodo.id}/comments`);
-    const fetchedComment = await response.data;
+    const response6 = await this.httpClient.get(`/todos/${newTodo.id}/comments`);
+    const fetchedComment = await response6.data;
     if (newComment.comment !== fetchedComment[0].comment) {
         throw new Error('testTodoCreation');
     }
     console.log("Get new todo comment");
 
     // Set the new one to done and check it really is done
-    response = await this.httpClient.post(`/todos/${newTodo.id}/done`);
-    response = await this.httpClient.get(`/todos/${newTodo.id}`);
-    const fetchedTodo2 = await response.data;
+    const response7 = await this.httpClient.post(`/todos/${newTodo.id}/done`);
+    const response8 = await this.httpClient.get(`/todos/${newTodo.id}`);
+    const fetchedTodo2 = await response8.data;
     if (!fetchedTodo2.done) {
         throw new Error('testTodoMarkedDone');
     }
     console.log("Set new todo to done");
 
     // delete new comment
-    response = await this.httpClient.delete(`/todos/${newTodo.id}/comments`);
-    const deletedComment = response.data;
+    const response9 = await this.httpClient.delete(`/todos/${newTodo.id}/comments`);
+    const deletedComment = response9.data;
     console.log("Delete new comment");
 
     // delete new todo
-    response = await this.httpClient.delete(`/todos/${newTodo.id}`);
-    const deletedTodo = response.data;
+    const response10 = await this.httpClient.delete(`/todos/${newTodo.id}`);
+    const deletedTodo = response10.data;
     console.log("Delete new todo");
 
     // check number went one down again
-    response = await this.httpClient.get(`/todos`);
-    const fetchedTodos3 = await response.data;
+    const response11 = await this.httpClient.get(`/todos`);
+    const fetchedTodos3 = await response11.data;
     const l3 = await fetchedTodos3.length;
     if (l3 != l2 - 1) {
         throw new Error('testTodoDeletion');
     }
     console.log("Check new todo is gone");
 
-    response = await this.httpClient.get(`/todos/${newTodo.id}`);
-    const fetchedTodo3 = response.data;
+    const response12 = await this.httpClient.get(`/todos/${newTodo.id}`);
+    const fetchedTodo3 = response12.data;
     if (fetchedTodo3) {
         throw new Error('testTodoDeletion');
     }

@@ -33,11 +33,13 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/', async (req, res) => {
+        console.log('get /');
         res.send('Todo API');
 });
 
 app.get('/todos', async (req, res) => {
     try {
+        console.log('get /todos');
         const result = await pool.query('SELECT * FROM todos');
         res.status(200).json(result.rows);
     } catch (err) {
@@ -47,6 +49,7 @@ app.get('/todos', async (req, res) => {
 });
 
 app.get('/todos/:id', async (req, res) => {
+    console.log('get /todos:id');
     try {
         const { id } = req.params;
         const result = await pool.query('SELECT * FROM todos WHERE id = $1', [id]);
@@ -58,6 +61,7 @@ app.get('/todos/:id', async (req, res) => {
 });
 
 app.post('/todos', async (req, res) => {
+    console.log('post /todos');
     try {
         const { text: name, done } = req.body;
         const result = await pool.query('INSERT INTO todos (name, done) VALUES ($1, $2) RETURNING *', [name, done]);
@@ -69,6 +73,7 @@ app.post('/todos', async (req, res) => {
 });
 
 app.post('/todos/:id/done', async (req, res) => {
+    console.log('post /todos/:id/done');
     try {
         const { id } = req.params;
         const result = await pool.query('UPDATE todos SET done = true WHERE id = $1 RETURNING *', [id]);
@@ -80,6 +85,7 @@ app.post('/todos/:id/done', async (req, res) => {
 });
 
 app.post('/todos/:id/undone', async (req, res) => {
+    console.log('post /todos/:id/undone');
     try {
         const { id } = req.params;
         const result = await pool.query('UPDATE todos SET done = false WHERE id = $1 RETURNING *', [id]);
@@ -91,6 +97,7 @@ app.post('/todos/:id/undone', async (req, res) => {
 });
 
 app.delete('/todos/:id', async (req, res) => {
+    console.log('delete /todos/:id');
     try {
         const { id } = req.params;
         await pool.query('DELETE FROM todos WHERE id = $1', [id]);
@@ -102,6 +109,7 @@ app.delete('/todos/:id', async (req, res) => {
 });
 
 app.get('/todos/:id/comments', async (req, res) => {
+    console.log('get /todos/:id/comments');
     try {
         const { id } = req.params;
         const { rows } = await pool.query('SELECT * FROM TodoComments WHERE todo_id = $1', [id]);
@@ -113,6 +121,7 @@ app.get('/todos/:id/comments', async (req, res) => {
 });
 
 app.post('/todos/:id/comments', async (req, res) => {
+    console.log('post /todos/:id/comments');
     try {
         const { id } = req.params;
         const { comment: text } = req.body;
@@ -125,6 +134,7 @@ app.post('/todos/:id/comments', async (req, res) => {
 });
 
 app.delete('/todos/:id/comments', async (req, res) => {
+    console.log('delete /todos/:id/comments');
     try {
         const { id } = req.params;
         await pool.query('DELETE FROM TodoComments WHERE todo_id = $1', [id]);
