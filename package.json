@@ -7,6 +7,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "helmet": "^7.0.0",
     "pg": "^8.11.1"
   },
   "scripts": {
@@ -15,7 +16,5 @@
     "api-d": "ENV=d node src/server/Server.js",
     "api-test-a": "ENV=a node src/test/Server.test.js",
     "api-test-d": "ENV=d node src/test/Server.test.js"
-  },
-  "devDependencies": {
   }
 }
