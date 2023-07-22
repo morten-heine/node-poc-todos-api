@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const pool = require('../db');
-const { encrypt, decrypt } = require('../../utils/crypto.js');
+const pool = require('./db');
+const { encrypt, decrypt } = require('../utils/crypto.js');
 
 router.get('/', async (req, res) => {
     try {
