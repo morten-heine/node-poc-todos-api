@@ -3,7 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 require('dotenv').config();
 const todoComments = require('./repos/todoComments.js');
-const todos = require('./todos.js');
+const todos = require('./repos/todos.js');
 const root = require('./repos/root.js');
 
 const app = express();
