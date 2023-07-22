@@ -19,7 +19,7 @@ function delay(time) {
     // Get todos
     const response1 = await this.httpClient.get(`/todos`);
     const fetchedTodos1 = await response1.data;
-    console.log("Got todos");
+    console.log(`Got todos`);
 
     // create new item
     const todo = { text: 'Test todo', done: false };
