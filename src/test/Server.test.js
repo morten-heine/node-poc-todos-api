@@ -21,7 +21,7 @@ function delay(time) {
     const fetchedTodos1 = await response1.data;
     console.log("Got todos");
 
-    // create new todo
+    // create new item
     const todo = { text: 'Test todo', done: false };
     const response2 = await this.httpClient.post('/todos', todo);
     const newTodo = await response2.data;
@@ -75,7 +75,7 @@ function delay(time) {
     const deletedComment = response9.data;
     console.log("Deleted new comment");
 
-    // delete new todo
+    // delete new item
     const response10 = await this.httpClient.delete(`/todos/${newTodo.id}`);
     const deletedTodo = response10.data;
     console.log("Deleted new todo");
