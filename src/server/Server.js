@@ -153,8 +153,6 @@ app.get('/todos/:id/comments', async (req, res) => {
 
         for (let i = 0; i < rows.length; i++) {
             const decryptedComment = decrypt(rows[i].comment, key);
-            console.log(`encrypted:${rows[i].comment}`);
-            console.log(`decrypted:${decryptedComment}`);
             rows[i].comment = decryptedComment;
         }
         console.log(rows)
@@ -172,8 +170,11 @@ app.post('/todos/:id/comments', async (req, res) => {
         const { comment: text } = req.body;
         const encrypted_text = encrypt(text,key);
 
-        const result = await pool.query('INSERT INTO TodoComments (comment, todo_id) VALUES ($1, $2) RETURNING *', [encrypted_text, id]);
-        res.status(200).json(result.rows[0]);
+        const { rows } = await pool.query('INSERT INTO TodoComments (comment, todo_id) VALUES ($1, $2) RETURNING *', [encrypted_text, id]);
+        const decryptedComment = decrypt(rows[0].comment, key);
+        rows[0].comment = decryptedComment;
+
+        res.status(200).json(rows[0]);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'An error occurred while creating comment' });
