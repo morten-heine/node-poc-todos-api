@@ -7,7 +7,6 @@ function delay(time) {
 
 (async () => {
     const env=process.env.ENV;
-
     const apihost = process.env[`api_host_${env}`];
     const apiport = process.env[`api_listen_port_${env}`];
     const apiprotocol = process.env[`api_protocol_${env}`];
@@ -57,8 +56,8 @@ function delay(time) {
     // Fetch the comment
     const response6 = await this.httpClient.get(`/todos/${newTodo.id}/comments`);
     const fetchedComment = await response6.data;
-    if (newComment.comment !== fetchedComment[0].comment) {
-        throw new Error('testTodoCreation');
+    if (com.comment !== fetchedComment[0].comment) {
+        throw new Error(`testTodoCreation`);
     }
     console.log("Got new todo comment");
 

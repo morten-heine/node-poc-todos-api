@@ -3,11 +3,14 @@ const { Pool } = require('pg');
 const cors = require('cors');
 const helmet = require('helmet');
 require('dotenv').config();
+const { encrypt, decrypt } = require('../utils/crypto.js');
 
 const app = express();
 
-// todo: env keys should be upper case.
 const env=process.env.ENV;
+const key = process.env[`ENCRYPTION_KEY_${env}`];
+console.log(`key:${key}`);
+
 const apihost = process.env[`api_host_${env}`];
 const apiport = process.env.PORT || process.env[`api_listen_port_${env}`];
 
@@ -147,6 +150,14 @@ app.get('/todos/:id/comments', async (req, res) => {
     try {
         const { id } = req.params;
         const { rows } = await pool.query('SELECT * FROM TodoComments WHERE todo_id = $1 order by id', [id]);
+
+        for (let i = 0; i < rows.length; i++) {
+            const decryptedComment = decrypt(rows[i].comment, key);
+            console.log(`encrypted:${rows[i].comment}`);
+            console.log(`decrypted:${decryptedComment}`);
+            rows[i].comment = decryptedComment;
+        }
+        console.log(rows)
         res.status(200).json(rows);
     } catch (err) {
         console.error(err);
@@ -159,7 +170,9 @@ app.post('/todos/:id/comments', async (req, res) => {
     try {
         const { id } = req.params;
         const { comment: text } = req.body;
-        const result = await pool.query('INSERT INTO TodoComments (comment, todo_id) VALUES ($1, $2) RETURNING *', [text, id]);
+        const encrypted_text = encrypt(text,key);
+
+        const result = await pool.query('INSERT INTO TodoComments (comment, todo_id) VALUES ($1, $2) RETURNING *', [encrypted_text, id]);
         res.status(200).json(result.rows[0]);
     } catch (err) {
         console.error(err);
